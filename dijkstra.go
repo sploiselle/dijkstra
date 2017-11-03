@@ -95,8 +95,8 @@ func main() {
 
 	dijkstra(1)
 
-	for _, v := range []int{7, 37, 59, 82, 99, 115, 133, 165, 188, 197} {
-		fmt.Printf("%d,", int(VertexMap[v].Length))
+	for _, v := range VertexMap {
+		fmt.Printf("%d:\t%d\n", v.Id, int(v.Length))
 	}
 }
 
