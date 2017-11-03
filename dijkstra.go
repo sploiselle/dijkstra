@@ -11,56 +11,54 @@ import (
 	"strings"
 )
 
-type NodeTuple struct {
-	HeadVertexId int
-	HeadVertex   *Vertex
-	Distance     float64
+// EdgeTuple contain the HeadVertex and Distance from the Vertex.ID to which they belong
+type EdgeTuple struct {
+	HeadertexID int
+	HeadVertex  *Vertex
+	Distance    float64
 }
 
-func (n NodeTuple) String() string {
-	return fmt.Sprintf("\nHeadVertex:\t%d\nDistance:\t%f\n", n.HeadVertexId, n.Distance)
+func (n EdgeTuple) String() string {
+	return fmt.Sprintf("\nHeadVertex:\t%d\nDistance:\t%f\n", n.HeadertexID, n.Distance)
 }
 
+//A Vertex is a point on a graph, which contains []Edges to other Vertexes.
 type Vertex struct {
-	Id     int
-	Edges  []NodeTuple
+	ID     int
+	Edges  []EdgeTuple
 	DGS    float64 // Dijkstra Greedy Score
 	Index  int     // Index of item in heap
 	Length float64 // Calculated length
 }
 
 func (v Vertex) String() string {
-	return fmt.Sprintf("\nid:\t%d\nedges: %v\nDGS:\t%g\nIndex:\t%d\nLength:\t%g\n\n\n\n", v.Id, v.Edges, v.DGS, v.Index, v.Length)
+	return fmt.Sprintf("\nid:\t%d\nedges: %v\nDGS:\t%g\nIndex:\t%d\nLength:\t%g\n\n\n\n", v.ID, v.Edges, v.DGS, v.Index, v.Length)
 }
 
-func (v *Vertex) AddEdge(i NodeTuple) {
-	v.Edges = append(v.Edges, i)
+// AddEdge appends an EdgeTuple to a Vertex's []Edges
+func (v *Vertex) AddEdge(e EdgeTuple) {
+	v.Edges = append(v.Edges, e)
 }
 
-// Adjacency lists
-//[Vertex.Id]*Vertex
+// VertexMap tracks Vertexes using [Vertex.ID]*Vertex
 var VertexMap = make(map[int]*Vertex)
 
-//[Vertex.Id]distance
-var DistanceMap = make(map[int]int)
-
-// A VertexHeap implements heap.Interface and holds Items.
+// A VertexHeap implements heap.Interface and holds Vertexes.
 type VertexHeap []*Vertex
 
 func (vh VertexHeap) Len() int { return len(vh) }
 
 func (vh VertexHeap) Less(i, j int) bool {
-
 	return vh[i].DGS < vh[j].DGS
 }
 
 func (vh VertexHeap) Swap(i, j int) {
 	vh[i], vh[j] = vh[j], vh[i]
-
 	vh[i].Index = i
 	vh[j].Index = j
 }
 
+// Push adds Vertexes to VertexHeaps
 func (vh *VertexHeap) Push(x interface{}) {
 	n := len(*vh)
 	v := x.(*Vertex)
@@ -68,6 +66,7 @@ func (vh *VertexHeap) Push(x interface{}) {
 	*vh = append(*vh, v)
 }
 
+// Pop returns the Vertex with the lowest DGS and removes it from the heap
 func (vh *VertexHeap) Pop() interface{} {
 	old := *vh
 	n := len(old)
@@ -96,7 +95,7 @@ func main() {
 	dijkstra(1)
 
 	for _, v := range VertexMap {
-		fmt.Printf("%d:\t%d\n", v.Id, int(v.Length))
+		fmt.Printf("%d:\t%d\n", v.ID, int(v.Length))
 	}
 }
 
@@ -114,25 +113,25 @@ func readFile(filename string) {
 
 		thisLine := strings.Fields(scanner.Text())
 
-		thisVertexId, err := strconv.Atoi(thisLine[0])
+		thisertexID, err := strconv.Atoi(thisLine[0])
 
 		if err != nil {
 			fmt.Printf("couldn't convert number: %v\n", err)
 			return
 		}
 
-		w, ok := VertexMap[thisVertexId]
+		w, ok := VertexMap[thisertexID]
 
 		if !ok {
-			w = &Vertex{thisVertexId, []NodeTuple{}, math.Inf(1), -1, -1}
-			VertexMap[thisVertexId] = w
+			w = &Vertex{thisertexID, []EdgeTuple{}, math.Inf(1), -1, -1}
+			VertexMap[thisertexID] = w
 		}
 
 		for i := 1; i < len(thisLine); i++ {
 
 			weightedEdge := strings.Split(thisLine[i], ",")
 
-			edgeId, err := strconv.Atoi(weightedEdge[0])
+			edgeID, err := strconv.Atoi(weightedEdge[0])
 			weightOfEdge, err := strconv.ParseFloat(weightedEdge[1], 64)
 
 			if err != nil {
@@ -140,14 +139,14 @@ func readFile(filename string) {
 				return
 			}
 
-			u, ok := VertexMap[edgeId]
+			u, ok := VertexMap[edgeID]
 
 			if !ok {
-				u = &Vertex{edgeId, []NodeTuple{}, math.Inf(1), -1, -1}
-				VertexMap[edgeId] = u
+				u = &Vertex{edgeID, []EdgeTuple{}, math.Inf(1), -1, -1}
+				VertexMap[edgeID] = u
 			}
 
-			w.AddEdge(NodeTuple{edgeId, u, weightOfEdge})
+			w.AddEdge(EdgeTuple{edgeID, u, weightOfEdge})
 
 		}
 	}
