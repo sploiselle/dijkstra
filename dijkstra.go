@@ -63,18 +63,18 @@ func (vh VertexHeap) Swap(i, j int) {
 
 func (vh *VertexHeap) Push(x interface{}) {
 	n := len(*vh)
-	this_vertex := x.(*Vertex)
-	this_vertex.Index = n
-	*vh = append(*vh, this_vertex)
+	v := x.(*Vertex)
+	v.Index = n
+	*vh = append(*vh, v)
 }
 
 func (vh *VertexHeap) Pop() interface{} {
 	old := *vh
 	n := len(old)
-	this_vertex := old[n-1]
-	this_vertex.Index = -1 // for safety, identify it's no longer in heap
+	v := old[n-1]
+	v.Index = -1 // for safety, identify it's no longer in heap
 	*vh = old[0 : n-1]
-	return this_vertex
+	return v
 }
 
 // update modifies the DGS of a Vertex in the heap.
@@ -183,9 +183,9 @@ func dijkstra(id int) {
 	for vh.Len() > 0 {
 		for _, tuple := range workingVertex.Edges {
 			v := tuple.HeadVertex
-			test_DGS := workingVertex.Length + tuple.Distance
-			if v.DGS > test_DGS {
-				vh.update(v, test_DGS)
+			TestDGS := workingVertex.Length + tuple.Distance
+			if v.DGS > TestDGS {
+				vh.update(v, TestDGS)
 			}
 		}
 
